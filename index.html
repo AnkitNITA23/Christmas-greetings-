@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Christmas Wonderland</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background: radial-gradient(circle, #002635, #001f3f);
+            font-family: 'Arial', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+        #snow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .snowflake {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: fall linear infinite;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(800px);
+                opacity: 0;
+            }
+        }
+        .glowing-text {
+            font-size: 2.5rem;
+            animation: glow 2s infinite alternate;
+        }
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 10px #e60073, 0 0 20px #e60073, 0 0 30px #e60073;
+            }
+            100% {
+                text-shadow: 0 0 20px #ff0066, 0 0 30px #ff0066, 0 0 40px #ff0066;
+            }
+        }
+        #party-zone {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 10000; /* Ensure balloons are above other content */
+        }
+        .party-item {
+            position: absolute;
+            z-index: 10000; /* Ensure balloons are above other content */
+            animation: balloonMoveUp 5s ease-out forwards;
+        }
+
+        /* Animation to make balloons move up */
+        @keyframes balloonMoveUp {
+            0% {
+                transform: translateY(100vh) scale(1); /* Start from the bottom of the screen */
+            }
+            100% {
+                transform: translateY(-100vh) scale(2); /* Move up and enlarge */
+                opacity: 0; /* Fade out as they move up */
+            }
+        }
+
+        #santa {
+            position: fixed;
+            bottom: 20px;
+            left: -200px;
+            width: 200px;
+            animation: santaAnimation 10s ease-in-out;
+            display: none;
+            z-index: 10000;
+        }
+        @keyframes santaAnimation {
+            0% {
+                left: -200px;
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                left: 110vw;
+            }
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .glowing-text {
+                font-size: 1.5rem;
+            }
+
+            #santa {
+                width: 150px;
+            }
+
+            .party-item {
+                width: 150px;
+                height: 150px;
+            }
+
+            /* Reduce snowflakes for mobile */
+            .snowflake {
+                width: 8px;
+                height: 8px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .glowing-text {
+                font-size: 1.2rem;
+            }
+
+            #santa {
+                width: 120px;
+            }
+
+            .party-item {
+                width: 120px;
+                height: 120px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowfall -->
+    <div id="snow"></div>
+
+    <!-- Header -->
+    <header class="text-center py-8">
+        <h1 class="text-5xl font-bold glowing-text">🎄 Welcome to Christmas Wonderland 🎄</h1>
+        <p class="mt-4 text-lg">Experience the magic of Christmas like never before!</p>
+    </header>
+
+    <!-- Main Section -->
+    <main class="flex flex-col items-center">
+        <!-- Christmas Tree -->
+        <section class="relative mt-8">
+            <!-- Increased size of Christmas Tree for responsiveness -->
+            <img src="./tree.png" alt="Decorative Christmas Tree" class="w-96 mx-auto">
+        </section>
+
+        <!-- Launch Party Button -->
+        <button 
+            class="mt-12 px-8 py-4 text-lg font-bold text-white bg-red-600 rounded-lg hover:bg-red-700"
+            onclick="launchParty()"
+        >
+            🎉 Launch Party! 🎉
+        </button>
+
+        <!-- Animated Greetings -->
+        <div class="mt-12 text-center">
+            <h2 class="text-4xl font-bold glowing-text">✨ Wishing You a Merry Christmas and a Happy New Year! ✨</h2>
+        </div>
+    </main>
+
+    <!-- Party Zone -->
+    <div id="party-zone"></div>
+
+    <!-- Santa Claus Animation -->
+    <img id="santa" src="./santa.png" alt="Santa Claus">
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 py-4 text-center mt-12">
+        <p class="text-sm">©Ankit Kumar,2024, Christmas Wonderland. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Snowfall and Party Effects -->
+    <script>
+        // Generate Snowflakes
+        function createSnowflakes() {
+            const snowContainer = document.getElementById('snow');
+            for (let i = 0; i < 100; i++) {
+                const snowflake = document.createElement('div');
+                snowflake.classList.add('snowflake');
+                snowflake.style.left = Math.random() * 100 + 'vw';
+                snowflake.style.animationDuration = Math.random() * 3 + 2 + 's';
+                snowContainer.appendChild(snowflake);
+            }
+        }
+        createSnowflakes();
+
+        // Ensure the music only plays once
+        let isMusicPlaying = false;
+        const audio = new Audio('songchristmas.mp3'); // Add your 10-second music file here
+
+        // Launch Party with upward moving balloons
+        function launchParty() {
+            const partyZone = document.getElementById('party-zone');
+            const santa = document.getElementById('santa');
+
+            // Prevent music from playing again if already playing
+            if (!isMusicPlaying) {
+                isMusicPlaying = true;
+                audio.play(); // Play music
+                audio.onended = () => {
+                    isMusicPlaying = false; // Reset music playing state after it ends
+                };
+            }
+
+            partyZone.innerHTML = ''; // Clear previous items
+            santa.style.display = 'block'; // Show Santa
+            santa.style.animation = 'santaAnimation 10s ease-in-out'; // Trigger Santa animation
+
+            // Add 3-4 balloons that move upward
+            for (let i = 0; i < 4; i++) {
+                const partyItem = document.createElement('img');
+                partyItem.classList.add('party-item');
+                partyItem.src = 'celebrate.png'; // Replace with your custom balloon PNG
+                partyItem.style.width = '200px'; // Increased size of the balloon PNG (200px)
+                partyItem.style.height = '200px'; // Increased size of the balloon PNG (200px)
+                partyItem.style.left = Math.random() * 100 + 'vw'; // Random horizontal position
+                partyItem.style.animationDuration = Math.random() * 2 + 3 + 's'; // Random animation duration
+                partyZone.appendChild(partyItem);
+            }
+
+            // Hide Santa after animation
+            setTimeout(() => {
+                santa.style.display = 'none';
+            }, 10000); // 10 seconds
+        }
+    </script>
+</body>
+</html>
